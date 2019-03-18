@@ -5,7 +5,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/MobileAppAutomationTest/AndroidDemo
+    working_directory: ~/MobileAppAutomationTest
     docker:
         - image: circleci/android:api-28-alpha
     environment:
@@ -14,14 +14,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: gradle-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum  "gradle/wrapper/gradle-wrapper.properties" }}
+          key: gradle-{{ checksum "/AndroidDemo/build.gradle" }}-{{ checksum  "/AndroidDemo/app/build.gradle" }}-{{ checksum  "/AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./AndroidDemo/gradlew androidDependencies
       - save_cache:
           paths:
           - ~/.gradle
-          key: gradle-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum  "gradle/wrapper/gradle-wrapper.properties" }}
+          key: gradle-{{ checksum "/AndroidDemo/build.gradle" }}-{{ checksum  "/AndroidDemo/app/build.gradle" }}-{{ checksum  "/AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Uninstall crcmod
           command: echo "y" | sudo pip uninstall crcmod
@@ -32,5 +32,5 @@ jobs:
           name: Run instrumentation tests in Firebase Test Lab
           command: bundle exec fastlane instrumentation_tests_testlab
       - store_artifacts:
-          path: firebase/
+          path: AndroidDemo/app/src/androidTest/java/com/mytaxi/android_demo/
           destination: /firebase/
