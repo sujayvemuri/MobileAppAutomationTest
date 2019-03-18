@@ -5,7 +5,7 @@
 version: 2
 jobs:
   test_instrumentation:
-    working_directory: ~/MobileAppAutomationTest/AndroidDemo
+    working_directory: ~/MobileAppAutomationTest
     docker:
         - image: circleci/android:api-28-alpha
     environment:
@@ -13,12 +13,15 @@ jobs:
         JVM_OPTS: -Xmx4g
     steps:
       - checkout
-      - *restore_gradle_cache
-      - *restore_gems_cache
-      - *ruby_dependencies
-      - *android_dependencies
-      - *save_gradle_cache
-      - *save_gems_cache
+      - restore_cache:
+          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+          - ~/.gradle
+          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Uninstall crcmod
           command: echo "y" | sudo pip uninstall crcmod
