@@ -14,14 +14,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: gradle-{{ checksum "/AndroidDemo/build.gradle" }}-{{ checksum  "/AndroidDemo/app/build.gradle" }}-{{ checksum  "/AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
+          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Download Dependencies
-          command: ./AndroidDemo/gradlew /AndroidDemo/androidDependencies
+          command: ./AndroidDemo/gradlew AndroidDemo/androidDependencies
       - save_cache:
           paths:
           - ~/.gradle
-          key: gradle-{{ checksum "/AndroidDemo/build.gradle" }}-{{ checksum  "/AndroidDemo/app/build.gradle" }}-{{ checksum  "/AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
+          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Uninstall crcmod
           command: echo "y" | sudo pip uninstall crcmod
