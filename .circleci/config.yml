@@ -17,7 +17,7 @@ jobs:
           key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
       - run:
           name: Download Dependencies
-          command: ./AndroidDemo/gradlew AndroidDemo/app/androidDependencies
+          command: ./AndroidDemo/gradlew dependencies
       - save_cache:
           paths:
           - ~/.gradle
