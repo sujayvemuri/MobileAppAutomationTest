@@ -59,11 +59,6 @@ public class ExampleInstrumentedTest {
         };
     }
 
-    @Rule
-    public ActivityTestRule<MainActivity> activityRule =
-            new ActivityTestRule<>(MainActivity.class);
-
-    @Test
     public void UserLogin() throws Exception {
 
         onView(withId(R.id.edt_username))
@@ -74,8 +69,15 @@ public class ExampleInstrumentedTest {
                 .perform(click());
     }
 
+    @Rule
+    public ActivityTestRule<MainActivity> activityRule =
+            new ActivityTestRule<>(MainActivity.class);
+
+
     @Test
     public void myTaxiTest() throws Exception  {
+
+        UserLogin();
 
         onView(isRoot())
                 .perform(waitFor(5000));
@@ -93,7 +95,5 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.fab)).perform(click());
 
     }
-
-
 
 }
