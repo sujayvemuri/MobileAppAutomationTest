@@ -1,26 +1,27 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/MobileAppAutomationTest
+    working_directory: ~/MobileAppAutomationTest/AndroidDemo
     docker:
     - image: circleci/android:api-28-alpha
     environment:
     - JVM_OPTS: -Xmx3200m
     steps:
     - checkout
+      path: ~/MobileAppAutomationTest
     - restore_cache:
-        key: jars-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle"
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle"
           }}
     - run:
         name: Chmod permissions
-        command: sudo chmod +x ./AndroidDemo/gradlew
+        command: sudo chmod +x ./gradlew
     - run:
         name: Download Dependencies
-        command: ./AndroidDemo/gradlew dependencies
+        command: ./gradlew dependencies
     - save_cache:
         paths:
         - ~/AndroidDemo/.gradle
-        key: jars-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle"
+        key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle"
           }}
     - run:
         name: Lists installed targets
@@ -48,12 +49,12 @@ jobs:
           adb shell input keyevent 82
     - run:
         name: Run Espresso UI Tests
-        command: ./AndroidDemo/gradlew :app:connectedDebugAndroidTest
+        command: ./gradlew :app:connectedDebugAndroidTest
     - store_artifacts:
-        path: AndroidDemo/app/build/reports
+        path: app/build/reports
         destination: reports
     - store_test_results:
-        path: AndroidDemo/app/build/test-results
+        path: app/build/test-results
 workflows:
   version: 2
   workflow:
