@@ -49,7 +49,7 @@ jobs:
     - run:
         name: Run Espresso UI Tests
         path: ~/MobileAppAutomationTest/AndroidDemo
-        command: ./AndroidDemo/gradlew :app:connectedDebugAndroidTest
+        command: ./gradlew :app:connectedDebugAndroidTest
     - store_artifacts:
         path: AndroidDemo/app/build/reports
         destination: reports
