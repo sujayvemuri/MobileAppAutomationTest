@@ -35,7 +35,6 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExampleInstrumentedTest {
 
     /**
