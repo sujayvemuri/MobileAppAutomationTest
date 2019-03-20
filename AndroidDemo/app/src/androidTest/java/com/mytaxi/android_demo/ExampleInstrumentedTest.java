@@ -13,6 +13,7 @@ import android.view.View;
 import com.mytaxi.android_demo.activities.MainActivity;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,7 +64,8 @@ public class ExampleInstrumentedTest {
     public ActivityTestRule<MainActivity> activityRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    public void UserLogin() {
+    @Test
+    public void UserLogin() throws Exception {
 
         onView(withId(R.id.edt_username))
                 .perform(typeText("crazydog335"));
@@ -74,9 +76,7 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void myTaxiTest()    {
-
-        UserLogin();
+    public void myTaxiTest() throws Exception  {
 
         onView(isRoot())
                 .perform(waitFor(5000));
@@ -95,14 +95,6 @@ public class ExampleInstrumentedTest {
 
     }
 
-    @Test
-    public void useAppContext() throws Exception {
-        // Context of the app under test.
 
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals("com.mytaxi.android_demo", appContext.getPackageName());
-
-    }
 
 }
