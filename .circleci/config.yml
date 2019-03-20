@@ -1,36 +1,47 @@
-# Java Gradle CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-java/ for more details
-#
-version: 2
-jobs:
-  build:
-    working_directory: ~/MobileAppAutomationTest
-    docker:
-        - image: circleci/android:api-28-alpha
-    environment:
-        GRADLE_OPTS: -Xmx4g -Dorg.gradle.daemon=false
-        JVM_OPTS: -Xmx4g
-    steps:
-      - checkout
-      - restore_cache:
-          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
-      - run:
-          name: Download Dependencies
-          command: ./AndroidDemo/gradlew dependencies
-      - save_cache:
-          paths:
-          - ~/.gradle
-          key: gradle-{{ checksum "AndroidDemo/build.gradle" }}-{{ checksum  "AndroidDemo/app/build.gradle" }}-{{ checksum  "AndroidDemo/gradle/wrapper/gradle-wrapper.properties" }}
-      - run:
-          name: Uninstall crcmod
-          command: echo "y" | sudo pip uninstall crcmod
-      - run:
-          name: Install crcmod
-          command: sudo pip install -U crcmod
-      - run:
-          name: Run instrumentation tests in Firebase Test Lab
-          command: bundle exec fastlane instrumentation_tests_testlab
-      - store_artifacts:
-          path: AndroidDemo/app/src/androidTest/java/com/mytaxi/android_demo/
-          destination: /firebase/
+general:
+  artifacts:
+    - "app/build/reports/androidTests/connected"
+
+machine:
+  java:
+    version: oraclejdk8
+  python:
+    version: 2.7.10
+  environment:
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+    TEST_FLAGS: "--configure-on-demand -PdisablePreDex"
+    TERM: "dumb"
+    ADB_INSTALL_TIMEOUT: "10"
+
+dependencies:
+  pre:
+    - if [ ! -e /usr/local/android-sdk-linux/build-tools/25.0.2 ]; then echo y | android update sdk --all --no-ui --filter "build-tools-25.0.2"; fi;
+    - if [ ! -e /usr/local/android-sdk-linux/platforms/android-25 ]; then echo y | android update sdk --all --no-ui --filter "android-25"; fi;
+    - if ! $(grep -q "Revision=44.0.0" /usr/local/android-sdk-linux/extras/android/m2repository/source.properties); then echo y | android update sdk --all --no-ui --filter "extra-android-m2repository"; fi;
+  cache_directories:
+    - /usr/local/android-sdk-linux/build-tools/25.0.2
+    - /usr/local/android-sdk-linux/platforms/android-25
+    - /usr/local/android-sdk-linux/extras/android/m2repository
+
+test:
+  override:
+    - ./AndroidDemo/gradlew assembleDebug -PdisablePreDex
+
+deployment:
+  espresso:
+    branch: master/AndroidDemo
+    commands:
+      - emulator -avd circleci-android22 -no-audio -no-window:
+          background: true
+          parallel: true
+      # wait for it to have booted
+      - circle-android wait-for-boot
+      # unlock the emulator screen
+      - sleep 30
+      - adb shell input keyevent 82
+      # run tests  against the emulator.
+      - ./gradlew connectedAndroidTest -PdisablePreDex
+      # copy the build outputs to artifacts
+      - cp -r app/build/outputs $CIRCLE_ARTIFACTS
+      # copy the test results to the test results directory.
+      - cp -r app/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
