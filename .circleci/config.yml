@@ -48,7 +48,7 @@ jobs:
           adb shell input keyevent 82
     - run:
         name: Run Espresso UI Tests
-        command: ./AndroidDemo/gradlew :app:connectedDebugAndroidTest
+        command: ./AndroidDemo/gradlew :AndroidDemo:app:connectedDebugAndroidTest
     - store_artifacts:
         path: AndroidDemo/app/build/reports
         destination: reports
