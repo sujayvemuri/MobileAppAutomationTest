@@ -64,7 +64,7 @@ public class ExampleInstrumentedTest {
         onView(withId(R.id.edt_username))
                 .perform(typeText("crazydog335"));
         onView(withId(R.id.edt_password))
-                .perform(typeText("venture"));
+                .perform(typeText("ventur"));
         onView(withId(R.id.btn_login))
                 .perform(click());
     }
